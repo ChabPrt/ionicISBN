@@ -3,14 +3,14 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'home',
-    loadChildren: () => import('./isbn/home.module').then(m => m.HomePageModule)
+    path: 'ibsn',
+    loadChildren: () => import('./isbn/isbn.module').then(m => m.IsbnModule)
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'ibsn',
     pathMatch: 'full'
-  },
+  }
 ];
 
 @NgModule({
