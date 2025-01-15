@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {IsbnService} from "../../services/isbn.service";
 import {Isbn} from "../../models/isbn.model";
-import {PacketStatus} from "../../models/network.declaration";
+import {PacketStatus} from "../../models/network.model";
 
 @Component({
   selector: 'app-isbn-list',
