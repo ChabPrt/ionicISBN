@@ -1,0 +1,7 @@
+{
+  "name": "ionic-isbn",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
