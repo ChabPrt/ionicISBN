@@ -1,0 +1,21 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Liste des QrCode scannés</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    @if(barcodeService.barcodes.value.length !== 0){
+      <ion-list>
+        @for (barcode of barcodeService.barcodes.value; track barcode.code){
+          <app-barcode [barcode]="barcode"
+                       [infoLoading]="spinnerOn.includes(barcode.code)"
+                       (fetchInfo)="handleFetchInfo(barcode)"
+                       (delete)="handleDelete(barcode)">
+          </app-barcode>
+        }
+      </ion-list>
+    }
+    @else{
+      <p>Aucun élement scanné</p>
+    }
+  </ion-card-content>
+</ion-card>

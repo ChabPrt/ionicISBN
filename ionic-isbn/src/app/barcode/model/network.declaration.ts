@@ -1,5 +1,5 @@
 import {StateSubject} from "../utils/StateSubject";
-import {IsbnBookMeta} from "./isbn.model";
+import {IsbnBookMeta} from "./barcode.declaration";
 
 export enum NetworkSyncStatus {
   SYNC = "SYNC",

@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <app-isbn-list></app-isbn-list>
+  <app-barcode-list></app-barcode-list>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="handleScan()" [disabled]="!this.cameraService.isScanSupported.value">

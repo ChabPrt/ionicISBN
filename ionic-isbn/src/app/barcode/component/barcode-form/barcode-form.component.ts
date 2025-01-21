@@ -2,15 +2,14 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
 
 @Component({
-  selector: 'app-isbn-form',
-  templateUrl: './isbn-form.component.html',
-  styleUrls: ['./isbn-form.component.scss'],
-  standalone: false,
+  selector: 'app-barcode-form',
+  templateUrl: './barcode-form.component.html',
+  styleUrls: ['./barcode-form.component.scss'],
 })
-export class IsbnFormComponent {
+export class BarcodeFormComponent {
 
-  @Output()
-  public isbnSubmit = new EventEmitter<string>();
+
+  @Output() barcodeSubmit = new EventEmitter<string>();
 
   public form = this.fb.group({
     code: new FormControl<string>('',{nonNullable: true,validators: [
@@ -21,9 +20,11 @@ export class IsbnFormComponent {
 
   constructor(private fb: FormBuilder) {}
 
+
   handleSubmit() {
     if(!this.form.valid) return;
-    this.isbnSubmit.emit(this.form.value.code!);
+    this.barcodeSubmit.emit(this.form.value.code!);
     this.form.reset();
   }
+
 }

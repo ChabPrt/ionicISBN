@@ -1,0 +1,26 @@
+@if(barcode){
+  <ion-item-sliding>
+    <ion-item>
+      <ion-label>
+        <h2>{{barcode.code}}</h2>
+        @if(barcode.bookMeta){
+          <p>Book Title: {{barcode.bookMeta.details.title}}</p>
+        } @else {
+          <p>Produit associé inconnu</p>
+        }
+      </ion-label>
+    </ion-item>
+
+    <ion-item-options>
+      @if(infoLoading){
+        <ion-item-option>
+          <ion-spinner></ion-spinner>
+        </ion-item-option>
+      }
+      @else if(!barcode.bookMeta){
+        <ion-item-option (click)="fetchInfo.emit(barcode)">Info</ion-item-option>
+      }
+      <ion-item-option color="danger" (click)="delete.emit(barcode)">Supprimer</ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+}

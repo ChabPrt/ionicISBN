@@ -1,9 +1,12 @@
-export type Isbn = {
+export type Barcode = {
+
   code: string
   bookMeta?: IsbnBookMeta
+
 }
 
 export type IsbnBookMeta ={
+
   bib_key : string,
   info_url: string
   preview_url : string
@@ -13,4 +16,5 @@ export type IsbnBookMeta ={
     publishers : string[],
     publish_date: string
   }
+
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {BarcodeScanner} from "@capacitor-mlkit/barcode-scanning";
-import {Isbn} from "../models/isbn.model";
+import {Barcode} from "../model/barcode.declaration";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class CameraService {
    * Les résultats sont transmis sous forme de tableau
    * En cas d'erreur (permission), on retourne null
    */
-  async scan(): Promise<Isbn[] | null> {
+  async scan(): Promise<Barcode[] | null> {
     const granted = await this.requestPermissions();
     if (!granted) {
       return null;

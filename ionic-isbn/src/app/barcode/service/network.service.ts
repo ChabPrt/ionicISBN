@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
-import {IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus} from "../models/network.model";
+import {IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus} from "../model/network.declaration";
 import {Network} from "@capacitor/network";
-import {Isbn, IsbnBookMeta} from "../models/isbn.model";
+import {Barcode, IsbnBookMeta} from "../model/barcode.declaration";
 
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkService {
+
+
   public isOnline = new BehaviorSubject(false);
   public syncState = new BehaviorSubject<NetworkSyncStatus>(NetworkSyncStatus.UNKNOWN);
   public pendingPackets : NetworkPacket[] = [];
@@ -37,8 +39,8 @@ export class NetworkService {
    * Permet de soumettre une requête pour obtenir des infos sur
    * un livre (à partir de son code ISBN)
    */
-  submitIsbnAction(isbn: Isbn) : NetworkPacket{
-    const isbnPacket : IsbnPacket = {isbnCode: "ISBN:"+isbn.code};
+  submitIsbnAction(barcode: Barcode) : NetworkPacket{
+    const isbnPacket : IsbnPacket = {isbnCode: "ISBN:"+barcode.code};
     const packet = new NetworkPacket(isbnPacket);
     this.pendingPackets.push(packet);
 

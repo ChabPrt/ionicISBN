@@ -3,14 +3,14 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'ibsn',
-    loadChildren: () => import('./isbn/isbn.module').then(m => m.IsbnModule)
+    path: 'barcode',
+    loadChildren: () => import('./barcode/barcode.module').then( m => m.BarcodeModule)
   },
   {
     path: '',
-    redirectTo: 'ibsn',
+    redirectTo: 'barcode',
     pathMatch: 'full'
-  }
+  },
 ];
 
 @NgModule({

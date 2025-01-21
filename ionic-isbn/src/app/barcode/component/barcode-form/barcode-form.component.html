@@ -1,0 +1,26 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Saisir un QrCode</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <form class="form-holder" [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <ion-list>
+        <ion-item class="input">
+          <div>
+            <ion-input [formControl]="form.controls.code" label="Code" placeholder="Merci de saisir le code"></ion-input>
+          </div>
+
+          @if (form.controls.code.invalid && (form.controls.code.dirty || !form.controls.code.untouched)){
+            <div class="error">
+              <p>Ce champs ne peut contenir que des valeurs numériques</p>
+            </div>
+          }
+        </ion-item>
+
+      </ion-list>
+      <br/>
+      <ion-button expand="full" type="submit">Valider</ion-button>
+    </form>
+  </ion-card-content>
+</ion-card>

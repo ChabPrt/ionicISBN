@@ -1,19 +1,19 @@
 import {Component} from '@angular/core';
-import {CameraService} from "../../services/camera.service";
-import {IsbnService} from "../../services/isbn.service";
+import {CameraService} from "../../service/camera.service";
+import {BarcodeService} from "../../service/barcode.service";
 import {AlertController} from "@ionic/angular";
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
-  standalone: false,
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
-
 export class HomePage{
+
   constructor(public cameraService: CameraService,
-              private barcodeService: IsbnService,
+              private barcodeService: BarcodeService,
               private alertController: AlertController) { }
+
 
   handleScan() {
     if(!this.cameraService.isScanSupported) return;
@@ -30,6 +30,7 @@ export class HomePage{
       }
     );
   }
+
 
   async showError(): Promise<void> {
     const alert = await this.alertController.create({

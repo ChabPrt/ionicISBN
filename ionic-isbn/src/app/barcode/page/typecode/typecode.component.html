@@ -3,9 +3,9 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>ISBN</ion-title>
+    <ion-title>Code barre</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <app-isbn-form (isbnSubmit)="handleAddIsbn($event)"></app-isbn-form>
+  <app-barcode-form (barcodeSubmit)="handleAddBarCode($event)"></app-barcode-form>
 </ion-content>

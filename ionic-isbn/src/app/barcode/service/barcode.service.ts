@@ -1,54 +1,54 @@
 import { Injectable } from '@angular/core';
-import {Isbn, IsbnBookMeta} from "../models/isbn.model";
+import {Barcode} from "../model/barcode.declaration";
 import {BehaviorSubject} from "rxjs";
 import {NetworkService} from "./network.service";
-import {NetworkPacket, PacketStatus} from "../models/network.model";
+import {NetworkPacket} from "../model/network.declaration";
 
 @Injectable({
   providedIn: 'root'
 })
+export class BarcodeService {
 
-export class IsbnService {
-  private static readonly LOCAL_STORAGE_KEY = "data";
-  public data = new BehaviorSubject<Isbn[]>([]);
+  private static readonly LOCAL_STORAGE_KEY = "barcodes";
+  public barcodes = new BehaviorSubject<Barcode[]>([]);
 
-  constructor(public networkService: NetworkService) {
+  constructor(private networkService: NetworkService) {
     //Chargement des tâches
     this.loadFromStorage();
 
     //A chaque changement d'état
-    this.data.subscribe({next: (_) => {
+    this.barcodes.subscribe({next: (_) => {
         this.saveToStorage();
       }});
   }
 
   /**
    * Méthode utilisée pour retirer le code bar du cache
-   * @param isbn Object code barre
+   * @param bc Object code barre
    */
-  delete(isbn: Isbn) {
-    const newIsbn = this.data.value.filter(i => i != isbn);
-    this.data.next(newIsbn);
+  delete(bc: Barcode) {
+    const newBc = this.barcodes.value.filter(b => b != bc);
+    this.barcodes.next(newBc);
   }
 
   /**
    * Méthode utilisée pour ajouter le code bar au cache
-   * @param isbn Object code barre
+   * @param bc Object code barre
    */
-  add(isbn: Isbn) {
-    const newIsbn = this.data.value;
-    newIsbn.push(isbn);
-    this.data.next(newIsbn);
+  add(bc: Barcode) {
+    const newBc = this.barcodes.value;
+    newBc.push(bc);
+    this.barcodes.next(newBc);
   }
 
   /**
    * Méthode utilisée pour ajouter le code bar au cache
-   * @param isbns Liste de codes barres
+   * @param bcs Liste de codes barres
    */
-  addMultiple(isbns: Isbn[]) {
-    const newIsbn = this.data.value;
-    isbns.forEach(i => newIsbn.push(i));
-    this.data.next(newIsbn);
+  addMultiple(bcs: Barcode[]) {
+    const newBc = this.barcodes.value;
+    bcs.forEach(b => newBc.push(b));
+    this.barcodes.next(newBc);
   }
 
 
@@ -57,22 +57,22 @@ export class IsbnService {
    * Les informations sont directement mis à jour dans l'objet et dans le cache
    * La valeur de retour permet de suivre l'avancement de la requête
    *
-   * @param isbn barcode data
+   * @param bc barcode data
    * @return NetworkPacket
    */
-  fetchInfo(isbn: Isbn) : NetworkPacket {
-    const netPacket = this.networkService.submitIsbnAction(isbn)
+  fetchInfo(bc: Barcode) : NetworkPacket {
+    const netPacket = this.networkService.submitIsbnAction(bc)
     netPacket.subscribe({next: (isbnInfo) => {
         //on met à jour les données
-        let barcode = this.data.value.find(i=> i.code == isbn.code);
+        let barcode = this.barcodes.value.find(b=> b.code == bc.code);
         if(!barcode || !isbnInfo) return;
 
-        isbn.bookMeta = isbnInfo;
+        bc.bookMeta = isbnInfo;
         barcode.bookMeta = isbnInfo;
 
         //on force l'update dans le localstorage
-        this.data.next(this.data.value);
-      }});
+        this.barcodes.next(this.barcodes.value);
+    }});
     return netPacket;
   }
 
@@ -81,10 +81,10 @@ export class IsbnService {
    * @private
    */
   private loadFromStorage(){
-    const savedTasks = localStorage.getItem(IsbnService.LOCAL_STORAGE_KEY);
+    const savedTasks = localStorage.getItem(BarcodeService.LOCAL_STORAGE_KEY);
     let tasks = savedTasks ? JSON.parse(savedTasks) : [];
 
-    this.data.next(tasks);
+    this.barcodes.next(tasks);
   }
 
   /**
@@ -92,6 +92,6 @@ export class IsbnService {
    * @private
    */
   saveToStorage(){
-    localStorage.setItem(IsbnService.LOCAL_STORAGE_KEY, JSON.stringify(this.data.value));
+    localStorage.setItem(BarcodeService.LOCAL_STORAGE_KEY, JSON.stringify(this.barcodes.value));
   }
 }
