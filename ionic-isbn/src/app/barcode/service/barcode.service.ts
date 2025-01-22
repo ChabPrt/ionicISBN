@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Barcode } from '../model/barcode.declaration';
+import { Barcode } from '../model/barcode.model';
 import { BehaviorSubject } from 'rxjs';
 import { NetworkService } from './network.service';
-import { NetworkPacket } from '../model/network.declaration';
+import { NetworkPacket } from '../model/network.model';
 
 @Injectable({
   providedIn: 'root',

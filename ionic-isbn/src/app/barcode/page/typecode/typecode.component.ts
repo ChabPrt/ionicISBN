@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BarcodeService } from '../../service/barcode.service';
-import { Barcode } from '../../model/barcode.declaration';
+import { Barcode } from '../../model/barcode.model';
 import { Location } from '@angular/common';
 
 @Component({

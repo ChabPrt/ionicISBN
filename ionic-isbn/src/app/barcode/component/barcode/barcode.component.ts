@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Barcode} from "../../model/barcode.declaration";
+import {Barcode} from "../../model/barcode.model";
 
 @Component({
   selector: 'app-barcode',

@@ -7,11 +7,11 @@ import { BehaviorSubject, Subject } from "rxjs";
  * @template T Le type des valeurs émises par le subject.
  * @template S Le type de l'état associé.
  */
-export class StateSubject<T, S> extends Subject<T> {
+export class StateSubjectUtil<T, S> extends Subject<T> {
   private readonly _state: BehaviorSubject<S>;
 
   /**
-   * Crée une instance de StateSubject avec un état initial.
+   * Crée une instance de StateSubjectUtil avec un état initial.
    *
    * @param defaultState La valeur initiale de l'état.
    */

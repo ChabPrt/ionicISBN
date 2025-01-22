@@ -1,5 +1,5 @@
-import { StateSubject } from "../utils/StateSubject";
-import { IsbnBookMeta } from "./barcode.declaration";
+import { StateSubjectUtil } from "../utils/state-subject.util";
+import { IsbnBookMeta } from "./barcode.model";
 
 // Enum pour représenter les différents statuts de synchronisation réseau.
 export enum NetworkSyncStatus {
@@ -22,8 +22,8 @@ export enum PacketStatus {
   SENT = "SENT",
 }
 
-// Classe pour encapsuler un paquet réseau et gérer son état via StateSubject.
-export class NetworkPacket extends StateSubject<IsbnBookMeta | undefined, PacketStatus> {
+// Classe pour encapsuler un paquet réseau et gérer son état via StateSubjectUtil.
+export class NetworkPacket extends StateSubjectUtil<IsbnBookMeta | undefined, PacketStatus> {
   public packet: IsbnPacket;
 
   constructor(isbnPacket: IsbnPacket) {
