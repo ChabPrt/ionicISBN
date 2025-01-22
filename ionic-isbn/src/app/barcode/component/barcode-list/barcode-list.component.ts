@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { BarcodeService } from '../../service/barcode.service';
-import { Barcode } from '../../model/barcode.model';
-import { PacketStatus } from '../../model/network.model';
+import { BarcodeService } from '../../services/barcode.service';
+import { Barcode } from '../../models/barcode.model';
+import { PacketStatus } from '../../models/network.model';
 
 @Component({
   selector: 'app-barcode-list',

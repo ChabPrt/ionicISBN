@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus } from '../model/network.model';
+import { IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus } from '../models/network.model';
 import { Network } from '@capacitor/network';
-import { Barcode, IsbnBookMeta } from '../model/barcode.model';
+import { Barcode, IsbnBookMeta } from '../models/barcode.model';
 
 @Injectable({
   providedIn: 'root',

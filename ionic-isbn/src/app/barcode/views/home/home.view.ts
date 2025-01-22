@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { CameraService } from '../../service/camera.service';
-import { BarcodeService } from '../../service/barcode.service';
+import { CameraService } from '../../services/camera.service';
+import { BarcodeService } from '../../services/barcode.service';
 import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  templateUrl: './home.view.html',
+  styleUrls: ['./home.view.scss'],
 })
-export class HomePage {
+export class HomeView {
   constructor(
     public cameraService: CameraService,
     private barcodeService: BarcodeService,

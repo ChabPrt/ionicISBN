@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Barcode} from "../../model/barcode.model";
+import {Barcode} from "../../models/barcode.model";
 
 @Component({
   selector: 'app-barcode',
-  templateUrl: './barcode.component.html',
-  styleUrls: ['./barcode.component.scss'],
+  templateUrl: './barcode-card.component.html',
+  styleUrls: ['./barcode-card.component.scss'],
 })
-export class BarcodeComponent{
+export class BarcodeCardComponent {
 
   @Input() barcode?: Barcode;
   @Output() fetchInfo : EventEmitter<Barcode> = new EventEmitter();

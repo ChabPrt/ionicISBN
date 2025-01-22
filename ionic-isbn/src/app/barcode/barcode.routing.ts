@@ -1,16 +1,16 @@
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
-import {HomePage} from "./page/home/home.component";
-import {TypecodePage} from "./page/typecode/typecode.component";
+import {HomeView} from "./views/home/home.view";
+import {TypecodeView} from "./views/typecode/typecode.view";
 
 const routes: Routes = [
   {
     path: '',
-    component: HomePage
+    component: HomeView
   },
   {
     path: 'add',
-    component: TypecodePage
+    component: TypecodeView
   }
 ];
 

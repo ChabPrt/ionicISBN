@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
-import { Barcode } from '../model/barcode.model';
+import { Barcode } from '../models/barcode.model';
 
 @Injectable({
   providedIn: 'root',

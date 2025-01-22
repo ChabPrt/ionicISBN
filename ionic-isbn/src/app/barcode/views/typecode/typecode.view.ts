@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { BarcodeService } from '../../service/barcode.service';
-import { Barcode } from '../../model/barcode.model';
+import { BarcodeService } from '../../services/barcode.service';
+import { Barcode } from '../../models/barcode.model';
 import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-typecode',
-  templateUrl: './typecode.component.html',
-  styleUrls: ['./typecode.component.scss'],
+  templateUrl: './typecode.view.html',
+  styleUrls: ['./typecode.view.scss'],
 })
-export class TypecodePage {
+export class TypecodeView {
   constructor(
     private barcodeService: BarcodeService,
     private location: Location
