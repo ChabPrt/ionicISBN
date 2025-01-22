@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {BarcodeService} from "../../service/barcode.service";
-import {Barcode} from "../../model/barcode.declaration";
-import {Location} from "@angular/common";
+import { BarcodeService } from '../../service/barcode.service';
+import { Barcode } from '../../model/barcode.declaration';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-typecode',
@@ -9,15 +9,22 @@ import {Location} from "@angular/common";
   styleUrls: ['./typecode.component.scss'],
 })
 export class TypecodePage {
+  constructor(
+    private barcodeService: BarcodeService,
+    private location: Location
+  ) {}
 
-  constructor(private barcodeService: BarcodeService,private location: Location) { }
-
-
-  handleAddBarCode(code: string) {
-    const barcodeModel : Barcode = {
-      code: code,
+  handleAddBarCode(code: string): void {
+    if (!code || code.trim() === '') {
+      console.warn('Code barre vide ou invalide.');
+      return;
     }
-    this.barcodeService.add(barcodeModel);
+
+    const barcodeModel: Barcode = {
+      code: code.trim(),
+    };
+
+    this.barcodeService.addBarcode(barcodeModel);
     this.location.back();
   }
 }

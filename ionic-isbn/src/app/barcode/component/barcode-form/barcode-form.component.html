@@ -1,26 +1,27 @@
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Saisir un QrCode</ion-card-title>
+    <ion-card-title>Saisir un QR Code</ion-card-title>
+    <ion-card-subtitle>Veuillez entrer un code valide pour continuer</ion-card-subtitle>
   </ion-card-header>
 
   <ion-card-content>
-    <form class="form-holder" [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
       <ion-list>
-        <ion-item class="input">
-          <div>
-            <ion-input [formControl]="form.controls.code" label="Code" placeholder="Merci de saisir le code"></ion-input>
-          </div>
-
-          @if (form.controls.code.invalid && (form.controls.code.dirty || !form.controls.code.untouched)){
-            <div class="error">
-              <p>Ce champs ne peut contenir que des valeurs numériques</p>
-            </div>
-          }
+        <ion-item>
+          <ion-label position="floating" color="primary">Code</ion-label>
+          <ion-input
+            type="text"
+            [formControl]="form.controls.code">
+          </ion-input>
         </ion-item>
-
+        <ion-text color="danger" *ngIf="form.controls.code.invalid && (form.controls.code.dirty || form.controls.code.touched)">
+          <p class="error">⚠️ Ce champ ne peut contenir que des valeurs numériques et doit comporter au moins 4 caractères</p>
+        </ion-text>
       </ion-list>
-      <br/>
-      <ion-button expand="full" type="submit">Valider</ion-button>
+
+      <ion-button expand="full" type="submit" [disabled]="form.invalid">
+        Valider
+      </ion-button>
     </form>
   </ion-card-content>
 </ion-card>

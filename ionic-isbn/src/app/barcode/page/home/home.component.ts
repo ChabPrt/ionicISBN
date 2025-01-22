@@ -1,41 +1,54 @@
-import {Component} from '@angular/core';
-import {CameraService} from "../../service/camera.service";
-import {BarcodeService} from "../../service/barcode.service";
-import {AlertController} from "@ionic/angular";
+import { Component } from '@angular/core';
+import { CameraService } from '../../service/camera.service';
+import { BarcodeService } from '../../service/barcode.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomePage{
+export class HomePage {
+  constructor(
+    public cameraService: CameraService,
+    private barcodeService: BarcodeService,
+    private alertController: AlertController
+  ) {}
 
-  constructor(public cameraService: CameraService,
-              private barcodeService: BarcodeService,
-              private alertController: AlertController) { }
+  async handleScan(): Promise<void> {
+    if (!this.cameraService.isScanSupported.value) {
+      await this.showError(
+        'Scanneur non supporté',
+        'Votre appareil ne prend pas en charge le scanneur de code-barres.'
+      );
+      return;
+    }
 
+    try {
+      const result = await this.cameraService.scanBarcodes();
 
-  handleScan() {
-    if(!this.cameraService.isScanSupported) return;
-    this.cameraService.scan().then(
-      value => {
-
-        //Gestion erreur
-        if(value == null){
-          this.showError();
-          return;
-        }
-        //Ajout des résultats dans le service
-        this.barcodeService.addMultiple(value);
+      if (!result || result.length === 0) {
+        await this.showError(
+          'Aucun code-barres trouvé',
+          'Aucun code-barres n’a été détecté lors du scan.'
+        );
+        return;
       }
-    );
+
+      this.barcodeService.addMultipleBarcodes(result);
+    } catch (error) {
+      await this.showError(
+        'Erreur lors du scan',
+        "Une erreur est survenue pendant le scan. Merci de réessayer."
+      );
+      console.error('Scan error:', error);
+    }
   }
 
-
-  async showError(): Promise<void> {
+  private async showError(header: string, message: string): Promise<void> {
     const alert = await this.alertController.create({
-      header: "Permission non autorisée",
-      message: "Merci d'autoriser l'application a utilisé la caméra.",
+      header,
+      message,
       buttons: ['Ok'],
     });
     await alert.present();

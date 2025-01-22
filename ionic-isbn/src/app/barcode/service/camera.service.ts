@@ -1,40 +1,41 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from "rxjs";
-import {BarcodeScanner} from "@capacitor-mlkit/barcode-scanning";
-import {Barcode} from "../model/barcode.declaration";
+import { BehaviorSubject } from 'rxjs';
+import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
+import { Barcode } from '../model/barcode.declaration';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CameraService {
-
-  public isScanSupported = new BehaviorSubject(false)
+  public isScanSupported = new BehaviorSubject(false);
 
   constructor() {
-    //On controle que c'est bien dispo
-    BarcodeScanner.isSupported().then((result) => {
-      this.isScanSupported.next(result.supported);
-    });
+    this.checkScannerSupport();
+  }
+
+  /** Vérifie si le scanner est supporté sur l'appareil */
+  private async checkScannerSupport(): Promise<void> {
+    const result = await BarcodeScanner.isSupported();
+    this.isScanSupported.next(result.supported);
   }
 
   /**
-   * Méthode utilisée pour ouvrir l'appareil photo du système en mode scan de code barre
-   * Les résultats sont transmis sous forme de tableau
-   * En cas d'erreur (permission), on retourne null
+   * Ouvre l'appareil photo pour scanner des codes-barres.
+   * Retourne une liste de résultats ou `null` en cas d'échec.
    */
-  async scan(): Promise<Barcode[] | null> {
-    const granted = await this.requestPermissions();
+  async scanBarcodes(): Promise<Barcode[] | null> {
+    const granted = await this.requestCameraPermissions();
     if (!granted) {
       return null;
     }
+
     const { barcodes } = await BarcodeScanner.scan();
-    return barcodes.map(b => {
-      return {code: b.rawValue};
-    });
+    return barcodes.map((b) => ({ code: b.rawValue }));
   }
 
-  async requestPermissions(): Promise<boolean> {
-      const { camera } = await BarcodeScanner.requestPermissions();
-      return camera === 'granted' || camera === 'limited';
+  /** Demande les permissions pour accéder à la caméra */
+  private async requestCameraPermissions(): Promise<boolean> {
+    const { camera } = await BarcodeScanner.requestPermissions();
+    return camera === 'granted' || camera === 'limited';
   }
 }

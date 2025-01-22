@@ -9,7 +9,6 @@ import {TypecodePage} from "./page/typecode/typecode.component";
 import {ReactiveFormsModule} from "@angular/forms";
 import {BarcodeListComponent} from "./component/barcode-list/barcode-list.component";
 
-
 @NgModule({
   exports: [HomePage],
   declarations: [HomePage, BarcodeComponent, BarcodeFormComponent, TypecodePage, BarcodeListComponent],

@@ -1,97 +1,69 @@
 import { Injectable } from '@angular/core';
-import {Barcode} from "../model/barcode.declaration";
-import {BehaviorSubject} from "rxjs";
-import {NetworkService} from "./network.service";
-import {NetworkPacket} from "../model/network.declaration";
+import { Barcode } from '../model/barcode.declaration';
+import { BehaviorSubject } from 'rxjs';
+import { NetworkService } from './network.service';
+import { NetworkPacket } from '../model/network.declaration';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BarcodeService {
-
-  private static readonly LOCAL_STORAGE_KEY = "barcodes";
+  private static readonly LOCAL_STORAGE_KEY = 'barcodes';
   public barcodes = new BehaviorSubject<Barcode[]>([]);
 
   constructor(private networkService: NetworkService) {
-    //Chargement des tâches
-    this.loadFromStorage();
+    this.loadBarcodesFromStorage();
+    this.barcodes.subscribe(() => this.saveBarcodesToStorage());
+  }
 
-    //A chaque changement d'état
-    this.barcodes.subscribe({next: (_) => {
-        this.saveToStorage();
-      }});
+  /** Supprime un code-barre du cache */
+  deleteBarcode(barcode: Barcode): void {
+    this.barcodes.next(this.barcodes.value.filter((b) => b !== barcode));
+  }
+
+  /** Ajoute un code-barre au cache */
+  addBarcode(barcode: Barcode): void {
+    this.barcodes.next([...this.barcodes.value, barcode]);
+  }
+
+  /** Ajoute plusieurs codes-barres au cache */
+  addMultipleBarcodes(barcodes: Barcode[]): void {
+    this.barcodes.next([...this.barcodes.value, ...barcodes]);
   }
 
   /**
-   * Méthode utilisée pour retirer le code bar du cache
-   * @param bc Object code barre
+   * Récupère les informations d'un livre à partir de son code ISBN.
+   * Les informations sont mises à jour dans le cache.
    */
-  delete(bc: Barcode) {
-    const newBc = this.barcodes.value.filter(b => b != bc);
-    this.barcodes.next(newBc);
-  }
+  fetchBookInfo(barcode: Barcode): NetworkPacket {
+    const netPacket = this.networkService.submitIsbnAction(barcode);
 
-  /**
-   * Méthode utilisée pour ajouter le code bar au cache
-   * @param bc Object code barre
-   */
-  add(bc: Barcode) {
-    const newBc = this.barcodes.value;
-    newBc.push(bc);
-    this.barcodes.next(newBc);
-  }
+    netPacket.subscribe({
+      next: (isbnInfo) => {
+        const barcodeInCache = this.barcodes.value.find((b) => b.code === barcode.code);
+        if (barcodeInCache && isbnInfo) {
+          barcode.bookMeta = isbnInfo;
+          barcodeInCache.bookMeta = isbnInfo;
+          this.barcodes.next(this.barcodes.value);
+        }
+      },
+      error: () => {
+        console.error(`Failed to fetch book info for barcode: ${barcode.code}`);
+      },
+    });
 
-  /**
-   * Méthode utilisée pour ajouter le code bar au cache
-   * @param bcs Liste de codes barres
-   */
-  addMultiple(bcs: Barcode[]) {
-    const newBc = this.barcodes.value;
-    bcs.forEach(b => newBc.push(b));
-    this.barcodes.next(newBc);
-  }
-
-
-  /**
-   * Méthode utilisée pour récupérer les infos d'un livre grace à son code ISBN
-   * Les informations sont directement mis à jour dans l'objet et dans le cache
-   * La valeur de retour permet de suivre l'avancement de la requête
-   *
-   * @param bc barcode data
-   * @return NetworkPacket
-   */
-  fetchInfo(bc: Barcode) : NetworkPacket {
-    const netPacket = this.networkService.submitIsbnAction(bc)
-    netPacket.subscribe({next: (isbnInfo) => {
-        //on met à jour les données
-        let barcode = this.barcodes.value.find(b=> b.code == bc.code);
-        if(!barcode || !isbnInfo) return;
-
-        bc.bookMeta = isbnInfo;
-        barcode.bookMeta = isbnInfo;
-
-        //on force l'update dans le localstorage
-        this.barcodes.next(this.barcodes.value);
-    }});
     return netPacket;
   }
 
-  /**
-   * Méthode utilisée pour charger les données depuis le localStorage
-   * @private
-   */
-  private loadFromStorage(){
-    const savedTasks = localStorage.getItem(BarcodeService.LOCAL_STORAGE_KEY);
-    let tasks = savedTasks ? JSON.parse(savedTasks) : [];
-
-    this.barcodes.next(tasks);
+  /** Charge les codes-barres depuis le localStorage */
+  private loadBarcodesFromStorage(): void {
+    const savedData = localStorage.getItem(BarcodeService.LOCAL_STORAGE_KEY);
+    const barcodes = savedData ? (JSON.parse(savedData) as Barcode[]) : [];
+    this.barcodes.next(barcodes);
   }
 
-  /**
-   * Méthode utilisée pour enregistrer les tâches dans le localStorage
-   * @private
-   */
-  saveToStorage(){
+  /** Sauvegarde les codes-barres dans le localStorage */
+  private saveBarcodesToStorage(): void {
     localStorage.setItem(BarcodeService.LOCAL_STORAGE_KEY, JSON.stringify(this.barcodes.value));
   }
 }

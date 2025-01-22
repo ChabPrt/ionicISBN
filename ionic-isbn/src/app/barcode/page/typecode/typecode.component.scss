@@ -1,0 +1,23 @@
+:host {
+  ion-header {
+    --background: var(--ion-color-light);
+    border-bottom: 1px solid var(--ion-color-medium);
+  }
+
+  ion-title {
+    font-weight: bold;
+    font-size: 1.4rem;
+  }
+
+  .ion-padding {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  app-barcode-form {
+    width: 100%;
+    max-width: 500px;
+  }
+}

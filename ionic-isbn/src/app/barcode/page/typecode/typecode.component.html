@@ -1,11 +1,12 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Code barre</ion-title>
+    <ion-title>✏️ Ajouter un code barre</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+
+<ion-content class="ion-padding">
   <app-barcode-form (barcodeSubmit)="handleAddBarCode($event)"></app-barcode-form>
 </ion-content>

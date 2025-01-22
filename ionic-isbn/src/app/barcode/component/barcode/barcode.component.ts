@@ -14,6 +14,4 @@ export class BarcodeComponent{
   @Input() infoLoading: boolean = false;
 
   constructor() { }
-
-
 }

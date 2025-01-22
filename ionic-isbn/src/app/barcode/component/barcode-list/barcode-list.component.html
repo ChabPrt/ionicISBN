@@ -1,21 +1,26 @@
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Liste des QrCode scannés</ion-card-title>
+    <ion-card-title>Liste des QR Codes scannés</ion-card-title>
   </ion-card-header>
+
   <ion-card-content>
-    @if(barcodeService.barcodes.value.length !== 0){
+    <ng-container *ngIf="barcodeService.barcodes.value.length > 0; else emptyState">
       <ion-list>
-        @for (barcode of barcodeService.barcodes.value; track barcode.code){
-          <app-barcode [barcode]="barcode"
-                       [infoLoading]="spinnerOn.includes(barcode.code)"
-                       (fetchInfo)="handleFetchInfo(barcode)"
-                       (delete)="handleDelete(barcode)">
-          </app-barcode>
-        }
+        <app-barcode
+          *ngFor="let barcode of barcodeService.barcodes.value; trackBy: trackByCode"
+          [barcode]="barcode"
+          [infoLoading]="spinnerOn.includes(barcode.code)"
+          (fetchInfo)="handleFetchInfo(barcode)"
+          (delete)="handleDelete(barcode)">
+        </app-barcode>
       </ion-list>
-    }
-    @else{
-      <p>Aucun élement scanné</p>
-    }
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <ion-icon name="cube-outline" size="large"></ion-icon>
+        <p>Aucun élément scanné pour le moment</p>
+      </div>
+    </ng-template>
   </ion-card-content>
 </ion-card>

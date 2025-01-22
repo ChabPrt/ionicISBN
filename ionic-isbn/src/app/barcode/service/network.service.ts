@@ -1,101 +1,90 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
-import {IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus} from "../model/network.declaration";
-import {Network} from "@capacitor/network";
-import {Barcode, IsbnBookMeta} from "../model/barcode.declaration";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { IsbnPacket, NetworkPacket, NetworkSyncStatus, PacketStatus } from '../model/network.declaration';
+import { Network } from '@capacitor/network';
+import { Barcode, IsbnBookMeta } from '../model/barcode.declaration';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NetworkService {
-
-
   public isOnline = new BehaviorSubject(false);
   public syncState = new BehaviorSubject<NetworkSyncStatus>(NetworkSyncStatus.UNKNOWN);
-  public pendingPackets : NetworkPacket[] = [];
+  private pendingPackets: NetworkPacket[] = [];
 
   constructor() {
-    Network.addListener('networkStatusChange', status => {
-      this.updateConnectionState(status.connected);
-    });
-    this.logCurrentNetworkStatus().then(status => this.updateConnectionState(status.connected))
+    Network.addListener('networkStatusChange', (status) => this.updateConnectionState(status.connected));
+    this.initializeNetworkState();
   }
 
-  private updateConnectionState(isOnline: boolean){
-    this.isOnline.next(isOnline);
-    //Si internet est dispo, on transmet les packets
-    if(isOnline) this.sendPackets().then();
-  }
-
-  /**
-   * Méthode utilisée pour savoir s'il y a une connexion internet
-   */
-  async logCurrentNetworkStatus(){
+  /** Initialise l'état réseau */
+  private async initializeNetworkState(): Promise<void> {
     const status = await Network.getStatus();
-    return status;
-  };
+    this.updateConnectionState(status.connected);
+  }
 
-  /**
-   * Permet de soumettre une requête pour obtenir des infos sur
-   * un livre (à partir de son code ISBN)
-   */
-  submitIsbnAction(barcode: Barcode) : NetworkPacket{
-    const isbnPacket : IsbnPacket = {isbnCode: "ISBN:"+barcode.code};
+  /** Met à jour l'état de la connexion réseau */
+  private updateConnectionState(isOnline: boolean): void {
+    this.isOnline.next(isOnline);
+    if (isOnline) {
+      this.processPendingPackets();
+    }
+  }
+
+  /** Soumet une requête pour récupérer les informations ISBN */
+  submitIsbnAction(barcode: Barcode): NetworkPacket {
+    const isbnPacket: IsbnPacket = { isbnCode: `ISBN:${barcode.code}` };
     const packet = new NetworkPacket(isbnPacket);
     this.pendingPackets.push(packet);
 
-    this.sendPackets().then();
+    this.processPendingPackets();
     return packet;
   }
 
+  /** Traite les packets en attente */
+  private async processPendingPackets(): Promise<void> {
+    while (this.pendingPackets.length > 0) {
+      const packet = this.pendingPackets.shift()!;
+      const success = await this.sendPacket(packet);
 
-  /**
-   * La méthode transmet les packets en attente au serveur
-   * @private
-   */
-  private async sendPackets(){
-
-    while(this.pendingPackets.length != 0){
-      //On prend le 1er
-      let packet = this.pendingPackets.shift()!;
-      let success = false;
-
-      const isbn = packet.packet.isbnCode;
-      const url = "https://openlibrary.org/api/books?bibkeys="+isbn+"&jscmd=details&format=json";
-      await fetch(url)
-        .then((response) => response.json())
-        .then((apiResult) => {
-          const result = Object.values(apiResult);
-          const bookMeta = result.length > 0 ? result[0] as IsbnBookMeta : undefined;
-          success = true;
-
-          packet.nextWithState(bookMeta,PacketStatus.SENT);
-          packet.complete();
-        }).catch(reason => {
-          //Impossible d'obtebir la réponse, on replace le packet dans la liste
-          success = false;
-          packet.setState(PacketStatus.WAITING_CONNECTION);
-          this.pendingPackets.unshift(packet)
-      });
-
-      if(!success){
-        //Suite au problème de connexion, on annule l'envoie des autres
+      if (!success) {
+        this.pendingPackets.unshift(packet);
         break;
       }
     }
+
     this.updateSyncState();
   }
 
-  /**
-   * La méthode met à jour l'état de la synchro entre le serveur et le client
-   * @private
-   */
-  private updateSyncState() : NetworkSyncStatus{
-    let newSync: NetworkSyncStatus;
-    if(this.pendingPackets.length != 0) newSync = NetworkSyncStatus.SERVER_LATE;
-    else newSync = this.isOnline.value ? NetworkSyncStatus.SYNC : NetworkSyncStatus.OFFLINE_SYNC;
+  /** Envoie un packet individuel */
+  private async sendPacket(packet: NetworkPacket): Promise<boolean> {
+    const isbn = packet.packet.isbnCode;
+    const url = `https://openlibrary.org/api/books?bibkeys=${isbn}&jscmd=details&format=json`;
 
-    this.syncState.next(newSync);
-    return newSync;
+    try {
+      const response = await fetch(url);
+      const apiResult = await response.json();
+      const result = Object.values(apiResult);
+      const bookMeta = result.length > 0 ? (result[0] as IsbnBookMeta) : undefined;
+
+      packet.nextWithState(bookMeta, PacketStatus.SENT);
+      packet.complete();
+      return true;
+    } catch (error) {
+      console.error(`Error sending packet for ISBN: ${isbn}`, error);
+      packet.setState(PacketStatus.WAITING_CONNECTION);
+      return false;
+    }
+  }
+
+  /** Met à jour l'état de synchronisation */
+  private updateSyncState(): void {
+    const newState = this.pendingPackets.length > 0
+      ? NetworkSyncStatus.SERVER_LATE
+      : this.isOnline.value
+        ? NetworkSyncStatus.SYNC
+        : NetworkSyncStatus.OFFLINE_SYNC;
+
+    this.syncState.next(newState);
   }
 }

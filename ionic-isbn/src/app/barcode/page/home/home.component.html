@@ -1,17 +1,21 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Code barre</ion-title>
+    <ion-title>📷 Code Barre</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
   <app-barcode-list></app-barcode-list>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="handleScan()" [disabled]="!this.cameraService.isScanSupported.value">
+    <ion-fab-button
+      (click)="handleScan()"
+      [disabled]="!cameraService.isScanSupported.value"
+      color="primary">
       <ion-icon name="scan"></ion-icon>
     </ion-fab-button>
-    <br/>
-    <ion-fab-button routerLink="add">
+
+    <ion-fab-button routerLink="add" color="secondary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
